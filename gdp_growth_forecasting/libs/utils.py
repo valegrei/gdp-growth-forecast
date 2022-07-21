@@ -3,25 +3,39 @@ from pandas import DataFrame, merge
 import matplotlib.pyplot as plt
 import contextlib
 
-def split_array(a: np.array, test_prop: float):
+def split_df(a: DataFrame, val_prop: float, test_prop: float):
     '''
-    Divide un array en dos (train, test) segun la proporcion de test
+    Divide un dataframe en tres (train, validation, test) segun la proporcion de test
 
     Parametros
     ----------
-    a : un numpy.array
-        Array al que se dividira.
-
+    a : un Dataframe
+        Dataframe al que se dividira. Debe tener doble indice (iso, year)
+        
     test_prop : flotante
         Proporcion de la particion de test.
 
     Retorna
     -------
-    splitting : una lista de tamano 2 (train, test)
+    splitting : una lista de dataframes de tamano 3 (train, validation, test)
 
     '''
-    b = np.random.choice(a, len(a), replace=False)
-    return np.split(b, [int((1.0-test_prop)*len(b))])
+    iso = a.index.get_level_values('iso').unique().to_numpy()
+    df_train = DataFrame()
+    df_test = DataFrame()
+    for i in iso:
+        df_temp = a.loc[i].copy()
+        df_temp['iso'] = i
+        years = df_temp.index.to_numpy()
+        n = len(years)
+        test_year = years[-1] - n * (test_prop)
+        df_train = df_train.append(df_temp.loc[ : test_year].copy())
+        df_test = df_test.append(df_temp.loc[test_year : ].copy())
+    df_train = df_train.reset_index()
+    df_test = df_test.reset_index()
+    df_train = df_train.set_index(['iso','year'])
+    df_test = df_test.set_index(['iso','year'])
+    return df_train, df_test
 
 
 def shift_data(df_x: DataFrame, df_y: DataFrame, n_steps_in: int, n_steps_out: int):
