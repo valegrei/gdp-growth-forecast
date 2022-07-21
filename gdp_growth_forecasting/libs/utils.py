@@ -3,7 +3,7 @@ from pandas import DataFrame, merge
 import matplotlib.pyplot as plt
 import contextlib
 
-def split_df(a: DataFrame, val_prop: float, test_prop: float):
+def split_df(a: DataFrame, test_prop: float):
     '''
     Divide un dataframe en tres (train, validation, test) segun la proporcion de test
 
