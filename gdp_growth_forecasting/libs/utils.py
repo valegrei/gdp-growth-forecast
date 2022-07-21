@@ -1,6 +1,6 @@
 import numpy as np
 from pandas import DataFrame, merge
-
+import matplotlib.pyplot as plt
 
 def split_array(a: np.array, test_prop: float):
     '''
@@ -126,3 +126,18 @@ def mape(orig, pred):
     if(orig.shape != pred.shape):
         raise Exception('Deben tener mismo shape')
     return np.sum(np.abs((orig - pred)/orig), axis=0)*100/len(orig)
+
+def plot_history(history,metric):
+    fig, ax = plt.subplots(figsize = (8,5))
+    ax.plot(history.history[metric],label='train '+metric)
+    ax.plot(history.history['val_'+metric],label='validation '+metric)
+    ax.legend()
+
+def plot_pred(orig,pred):
+    y_o, y_p = orig.T, pred.T
+    n = len(y_o)
+    fig, axes = plt.subplots(n,figsize=(5,12))
+    for i in range(n):
+        line_o, = axes[i].plot(y_o[i],label='orig')
+        line_p, = axes[i].plot(y_p[i],label='pred')
+        axes[i].legend(handles=[line_o,line_p])

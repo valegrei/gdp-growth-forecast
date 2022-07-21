@@ -1,4 +1,4 @@
-import models
+from models import build_mlp, build_cnn, build_lstm, build_gru, build_seq2seq
 from utils import shift_data
 from kerastuner import HyperModel
 
@@ -17,7 +17,7 @@ class MLPHyperModel(HyperModel):
         hp_nodes = hp.Int('nro_nodos',32,160,step=32)
         hp_ratio_aprendizaje = hp.Choice('ratio_aprendizaje', values=[1e-2, 1e-3, 1e-4])
 
-        return models.build_mlp(hp_time_steps,self.n_features,self.n_steps_out,hp_nodes,hp_capas,hp_ratio_aprendizaje,self.metrics)
+        return build_mlp(hp_time_steps,self.n_features,self.n_steps_out,hp_nodes,hp_capas,hp_ratio_aprendizaje,self.metrics)
 
     def fit(self, hp, model,x,y, **kwargs):
         x_s,y_s = shift_data(x,y,hp.get('steps_in'))
@@ -39,7 +39,7 @@ class CNNHyperModel(HyperModel):
         nro_nodos = hp.Int('nro_nodos',32,160,step=32)
         hp_ratio_aprendizaje = hp.Choice('ratio_aprendizaje', values=[1e-2, 1e-3, 1e-4])
         
-        return models.build_cnn(hp_time_steps,self.n_features,self.n_steps_out,nro_kernels,tam_kernel,nro_nodos,hp_ratio_aprendizaje,self.metrics)
+        return build_cnn(hp_time_steps,self.n_features,self.n_steps_out,nro_kernels,tam_kernel,nro_nodos,hp_ratio_aprendizaje,self.metrics)
 
     def fit(self, hp, model,x,y, **kwargs):
         x_s,y_s = shift_data(x,y,hp.get('steps_in'))
@@ -59,7 +59,7 @@ class LSTMHyperModel(HyperModel):
         hp_cells = hp.Int('nro_celulas',32,160,step=32)
         hp_ratio_aprendizaje = hp.Choice('ratio_aprendizaje', values=[1e-2, 1e-3, 1e-4])
         
-        return models.build_lstm(hp_time_steps,self.n_features,self.n_steps_out,hp_cells,hp_ratio_aprendizaje,self.metrics)
+        return build_lstm(hp_time_steps,self.n_features,self.n_steps_out,hp_cells,hp_ratio_aprendizaje,self.metrics)
 
     def fit(self, hp, model,x,y, **kwargs):
         x_s,y_s = shift_data(x,y,hp.get('steps_in'))
@@ -79,7 +79,7 @@ class GRUHyperModel(HyperModel):
         hp_cells = hp.Int('nro_celulas',32,160,step=32)
         hp_ratio_aprendizaje = hp.Choice('ratio_aprendizaje', values=[1e-2, 1e-3, 1e-4])
         
-        return models.build_gru(hp_time_steps,self.n_features,self.n_steps_out,hp_cells,hp_ratio_aprendizaje,self.metrics)
+        return build_gru(hp_time_steps,self.n_features,self.n_steps_out,hp_cells,hp_ratio_aprendizaje,self.metrics)
 
     def fit(self, hp, model,x,y, **kwargs):
         x_s,y_s = shift_data(x,y,hp.get('steps_in'))
@@ -99,7 +99,7 @@ class Seq2SeqHyperModel(HyperModel):
         hp_cells = hp.Int('nro_celulas',32,160,step=32)
         hp_ratio_aprendizaje = hp.Choice('ratio_aprendizaje', values=[1e-2, 1e-3, 1e-4])
 
-        return models.build_seq2seq(hp_time_steps,self.n_features,self.n_steps_out,hp_cells,hp_ratio_aprendizaje,self.metrics)
+        return build_seq2seq(hp_time_steps,self.n_features,self.n_steps_out,hp_cells,hp_ratio_aprendizaje,self.metrics)
 
     def fit(self, hp, model,x,y, **kwargs):
         x_s,y_s = shift_data(x,y,hp.get('steps_in'))
