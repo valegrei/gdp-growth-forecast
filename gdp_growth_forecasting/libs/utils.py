@@ -1,6 +1,7 @@
 import numpy as np
 from pandas import DataFrame, merge
 import matplotlib.pyplot as plt
+import contextlib
 
 def split_array(a: np.array, test_prop: float):
     '''
@@ -141,3 +142,8 @@ def plot_pred(orig,pred):
         line_o, = axes[i].plot(y_o[i],label='orig')
         line_p, = axes[i].plot(y_p[i],label='pred')
         axes[i].legend(handles=[line_o,line_p])
+
+def print_hp(path,tuner):
+    with open(path,'a') as o:
+        with contextlib.redirect_stdout(o):
+            tuner.results_summary(num_trials=1)
