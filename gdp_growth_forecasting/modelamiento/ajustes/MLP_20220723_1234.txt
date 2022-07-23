@@ -1,0 +1,18 @@
+Results summary
+Results in G:\MLP_20220723_1234
+Showing 1 best trials
+Objective(name='val_mse', direction='min')
+Trial summary
+Hyperparameters:
+steps_in: 10
+layers: 4
+nodes: 256
+dropout: 0.30000000000000004
+learning_rate: 0.001
+activation: relu
+tuner/epochs: 100
+tuner/initial_epoch: 34
+tuner/bracket: 2
+tuner/round: 2
+tuner/trial_id: 904ec822dc60e515d3507489aecb8b0d
+Score: 0.7184542417526245
