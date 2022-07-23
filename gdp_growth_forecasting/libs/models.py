@@ -154,8 +154,10 @@ def build_cnn(n_steps_in: int, n_features: int, n_steps_out: int, conv1_kernels:
     return model
 
 
-def build_lstm(n_steps_in: int, n_features: int, n_steps_out: int, cells: int,
-               layers_lstm: int, learning_rate: float, activation=None, metrics = None):
+def build_lstm(n_steps_in: int, n_features: int, n_steps_out: int, lstm_cells: int,
+                lstm_dropout : float, dense_layers : int, dense_nodes : int, 
+                dense_dropout : float, learning_rate: float, dense_activation = None,
+                metrics = None):
     '''
     Construye una Red LSTM
 
@@ -163,18 +165,34 @@ def build_lstm(n_steps_in: int, n_features: int, n_steps_out: int, cells: int,
     ----------
     n_steps_in : int
         Pasos de tiempo a pasado de entrada
+
     n_features : int
         Numero de caracteristicas de la entrada
+
     n_steps_out : int
         Pasos de tiempo a futuro de salida
-    cells : int
-        Numero de celulas por capa recurrente
-    layers_lstm : int
-        Numero de capas recurrentes
+
+    lstm_cells : int
+        Numero de celulas para capa LSTM
+    
+    lstm_dropout : float
+        Ratio de dropout para capa LSTM
+
+    dense_layers : int
+        Numero de capas Dense
+
+    dense_nodes : int
+        Numero de nodos por capa Dense
+
+    dense_dropout : float
+        Ratio de dropout para capa Dense
+
     learning_rate : float
         Ratio de aprendizaje
-    activation : 
+    
+    dense_activation : 
         Funcion de activacion.
+
     metrics : Any
         Lista de Metricas
 
@@ -183,23 +201,22 @@ def build_lstm(n_steps_in: int, n_features: int, n_steps_out: int, cells: int,
     model : Sequential
         Modelo LSTM construido
     '''
-    return_sequences = True
     model = Sequential()
-    model.add(LSTM(cells, activation=activation,
-              return_sequences=return_sequences, input_shape=(n_steps_in, n_features)))
-    for i in range(layers_lstm-1):
-        if i == layers_lstm-2:
-            return_sequences = False
-        model.add(LSTM(cells, return_sequences=return_sequences,
-                  activation=activation))
+    model.add(LSTM(lstm_cells, input_shape=(n_steps_in, n_features)))
+    model.add(Dropout(lstm_dropout))
+    for i in range(dense_layers):
+        model.add(Dense(dense_nodes, activation=dense_activation))
+    model.add(Dropout(dense_dropout))
     model.add(Dense(n_steps_out))
     model.compile(optimizer=Adam(learning_rate=learning_rate),
                   loss='mse', metrics=metrics)
     return model
 
 
-def build_gru(n_steps_in: int, n_features: int, n_steps_out: int, cells: int, layers: int,
-              learning_rate: float, activation=None, metrics = None):
+def build_gru(n_steps_in: int, n_features: int, n_steps_out: int, gru_cells: int,
+                gru_dropout : float, dense_layers : int, dense_nodes : int, 
+                dense_dropout : float, learning_rate: float, dense_activation = None,
+                metrics = None):
     '''
     Construye una Red GRU
 
@@ -210,34 +227,45 @@ def build_gru(n_steps_in: int, n_features: int, n_steps_out: int, cells: int, la
 
     n_features : int
         Numero de caracteristicas de la entrada
-        
+
     n_steps_out : int
         Pasos de tiempo a futuro de salida
-    cells : int
-        Numero de celulas por capa recurrente
-    layers : int
-        Numero de capas recurrentes
+
+    gru_cells : int
+        Numero de celulas para capa LSTM
+    
+    gru_dropout : float
+        Ratio de dropout para capa LSTM
+
+    dense_layers : int
+        Numero de capas Dense
+
+    dense_nodes : int
+        Numero de nodos por capa Dense
+
+    dense_dropout : float
+        Ratio de dropout para capa Dense
+
     learning_rate : float
         Ratio de aprendizaje
-    activation : 
+    
+    dense_activation : 
         Funcion de activacion.
+
     metrics : Any
         Lista de Metricas
 
     Resultado
     ---------
     model : Sequential
-        Modelo GRU construido
+        Modelo LSTM construido
     '''
-    return_sequences = True
     model = Sequential()
-    model.add(GRU(cells, activation=activation,
-              return_sequences=return_sequences, input_shape=(n_steps_in, n_features)))
-    for i in range(layers-1):
-        if i == layers-2:
-            return_sequences = False
-        model.add(GRU(cells, return_sequences=return_sequences,
-                  activation=activation))
+    model.add(GRU(gru_cells, input_shape=(n_steps_in, n_features)))
+    model.add(Dropout(gru_dropout))
+    for i in range(dense_layers):
+        model.add(Dense(dense_nodes, activation=dense_activation))
+    model.add(Dropout(dense_dropout))
     model.add(Dense(n_steps_out))
     model.compile(optimizer=Adam(learning_rate=learning_rate),
                   loss='mse', metrics=metrics)
