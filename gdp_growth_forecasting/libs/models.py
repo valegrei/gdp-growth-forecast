@@ -145,7 +145,7 @@ def build_cnn(n_steps_in: int, n_features: int, n_steps_out: int, conv1_kernels:
     model.add(Dropout(conv2_dropout))
     # Dense
     model.add(Flatten())
-    for i in dense_layers:
+    for i in range(dense_layers):
         model.add(Dense(dense_nodes, activation=dense_activation))
     model.add(Dropout(dense_dropout))
     model.add(Dense(n_steps_out))
