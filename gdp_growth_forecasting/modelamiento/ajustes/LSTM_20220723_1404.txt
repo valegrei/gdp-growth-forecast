@@ -1,0 +1,20 @@
+Results summary
+Results in G:\LSTM_20220723_1404
+Showing 1 best trials
+Objective(name='val_mse', direction='min')
+Trial summary
+Hyperparameters:
+steps_in: 10
+lstm_cells: 256
+lstm_dropout: 0.2
+dense_layers: 1
+dense_nodes: 192
+dense_dropout: 0.2
+learning_rate: 0.001
+dense_activation: relu
+tuner/epochs: 34
+tuner/initial_epoch: 12
+tuner/bracket: 4
+tuner/round: 3
+tuner/trial_id: c6c8d2459f9f70b65512c1003fe60143
+Score: 0.73088538646698
