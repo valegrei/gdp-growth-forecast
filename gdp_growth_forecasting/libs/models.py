@@ -1,13 +1,7 @@
-from keras.models import Sequential
-from keras.layers import Dense
-from keras.layers import Flatten
+from keras.models import Sequential, Model
+from keras.layers import Dense, Flatten, LSTM, GRU, Dropout, RepeatVector, TimeDistributed, Input, dot, Activation, concatenate
 from keras.layers.convolutional import Conv1D
 from keras.layers.convolutional import MaxPooling1D
-from keras.layers import LSTM
-from keras.layers import GRU
-from keras.layers import Dropout
-from keras.layers import RepeatVector
-from keras.layers import TimeDistributed
 from tensorflow.keras.optimizers import Adam
 
 
@@ -273,7 +267,8 @@ def build_gru(n_steps_in: int, n_features: int, n_steps_out: int, gru_cells: int
 
 
 def build_seq2seq(n_steps_in: int, n_features: int, n_steps_out: int, cells: int,
-                  learning_rate: float, activation=None, metrics = None):
+                  encoder_dropout : float, decoder_dropout : float, learning_rate : float,
+                  metrics = None):
     '''
     Construye una Red Encoder-Decoder o Seq2Seq
 
@@ -281,16 +276,25 @@ def build_seq2seq(n_steps_in: int, n_features: int, n_steps_out: int, cells: int
     ----------
     n_steps_in : int
         Pasos de tiempo a pasado de entrada
+
     n_features : int
         Numero de caracteristicas de la entrada
+
     n_steps_out : int
         Pasos de tiempo a futuro de salida
+
     cells : int
         Numero de celulas por capa recurrente
+
+    encoder_dropout : float
+        Ratio de dropout para capa Encoder
+
+    decoder_dropout : float
+        Ratio de dropout para capa Decoder
+    
     learning_rate : float
         Ratio de aprendizaje
-    activation : 
-        Funcion de activacion.
+
     metrics : Any
         Lista de Metricas
 
@@ -299,14 +303,26 @@ def build_seq2seq(n_steps_in: int, n_features: int, n_steps_out: int, cells: int
     model : Sequential
         Modelo GRU construido
     '''
-    model = Sequential()
-    # Encoder
-    model.add(LSTM(cells, activation=activation,
-              input_shape=(n_steps_in, n_features)))
-    model.add(RepeatVector(n_steps_out))
-    # Decoder
-    model.add(LSTM(cells, activation=activation, return_sequences=True))
-    model.add(TimeDistributed(Dense(1)))
-    model.compile(optimizer=Adam(learning_rate=learning_rate),
-                  loss='mse', metrics=metrics)
+    input_train = Input(shape= (n_steps_in, n_features))
+    output_train = Input(shape= (n_steps_out, 1))
+    # Codificador
+    encoder_stack_h, encoder_last_h, encoder_last_c = LSTM(cells, dropout = encoder_dropout,
+            return_sequences = True, return_state = True)(input_train)
+    decoder_input = RepeatVector(output_train.shape[1])(encoder_last_h)
+    # Decodificador
+    decoder_stack_h = LSTM(cells, dropout = decoder_dropout, return_state = False,
+            return_sequences = True)(decoder_input, initial_state = [encoder_last_h, encoder_last_c])
+    # Atencion
+    attention = dot([decoder_stack_h, encoder_stack_h], axes=[2,2])
+    attention = Activation('softmax')(attention)
+    # Contexto
+    context = dot([attention, encoder_stack_h], axes = [2,1])
+
+    decoder_combined_context = concatenate([context, decoder_stack_h])
+
+    out = TimeDistributed(Dense(output_train.shape[2]))(decoder_combined_context)
+
+    model = Model(inputs = input_train, outputs=out)
+    opt = Adam(learning_rate = learning_rate)
+    model.compile(loss = 'mse', optimizer = opt, metrics = metrics)
     return model
