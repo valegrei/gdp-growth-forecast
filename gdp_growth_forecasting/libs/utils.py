@@ -161,3 +161,9 @@ def print_hp(path,tuner):
     with open(path,'a') as o:
         with contextlib.redirect_stdout(o):
             tuner.results_summary(num_trials=1)
+
+def flatten(A : np.ndarray):
+    r = list()
+    for a in A:
+        r.append(a.flatten())
+    return np.array(r)
