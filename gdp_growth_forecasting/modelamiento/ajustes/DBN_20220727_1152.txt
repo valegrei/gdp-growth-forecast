@@ -1,0 +1,11 @@
+Results summary
+Results in G:\DBN_20220727_1152
+Showing 1 best trials
+Objective(name='score', direction='min')
+Trial summary
+Hyperparameters:
+rbm_layers: 1
+rbm_nodes: 240
+activation: tanh
+dropout: 0.1
+Score: 0.8033670300354274
