@@ -1,0 +1,24 @@
+Results summary
+Results in G:\CNN_20220723_1323
+Showing 1 best trials
+Objective(name='val_mse', direction='min')
+Trial summary
+Hyperparameters:
+steps_in: 9
+conv1_kernels: 48
+conv1_kernel_size: 3
+conv1_dropout: 0.2
+conv2_kernels: 64
+conv2_kernel_size: 3
+conv2_dropout: 0.30000000000000004
+dense_nodes: 256
+dense_layers: 3
+dense_dropout: 0.4
+learning_rate: 0.001
+conv_activation: tanh
+dense_activation: tanh
+tuner/epochs: 100
+tuner/initial_epoch: 0
+tuner/bracket: 0
+tuner/round: 0
+Score: 0.7271080613136292

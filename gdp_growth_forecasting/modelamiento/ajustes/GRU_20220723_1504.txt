@@ -1,0 +1,20 @@
+Results summary
+Results in G:\GRU_20220723_1504
+Showing 1 best trials
+Objective(name='val_mse', direction='min')
+Trial summary
+Hyperparameters:
+steps_in: 10
+gru_cells: 160
+gru_dropout: 0.5
+dense_layers: 2
+dense_nodes: 224
+dense_dropout: 0.4
+learning_rate: 0.001
+dense_activation: relu
+tuner/epochs: 34
+tuner/initial_epoch: 12
+tuner/bracket: 3
+tuner/round: 2
+tuner/trial_id: 493d4b8155b4dbb6e46b8510d06e5631
+Score: 0.7402277588844299
