@@ -126,21 +126,21 @@ def mae(orig, pred):
     # Verificar si tienen mismo shape
     if(orig.shape != pred.shape):
         raise Exception('Deben tener mismo shape')
-    return np.sum(np.abs(orig - pred), axis=0)/len(orig)
+    return np.mean(np.abs(orig - pred))
 
 
 def rmse(orig, pred):
     # Verificar si tienen mismo shape
     if(orig.shape != pred.shape):
         raise Exception('Deben tener mismo shape')
-    return np.sqrt(np.sum((orig - pred)**2, axis=0)/len(orig))
+    return np.sqrt(np.mean((orig - pred)**2))
 
 
 def mape(orig, pred):
     # Verificar si tienen mismo shape
     if(orig.shape != pred.shape):
         raise Exception('Deben tener mismo shape')
-    return np.sum(np.abs((orig - pred)/orig), axis=0)*100/len(orig)
+    return np.mean(np.abs((orig - pred)/orig))*100
 
 def plot_history(history,metric):
     fig, ax = plt.subplots(figsize = (8,5))
@@ -162,7 +162,6 @@ def plot_pred(orig,pred,last_year):
     df = df.set_index('year')
     
     n = len(y_o)
-    print(y_o.shape)
     for i in range(n):
         fig, ax = plt.subplots(figsize=(8,4))
         line_o, = ax.plot(df['orig_'+str(i+1)],label='orig')
