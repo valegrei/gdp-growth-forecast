@@ -126,21 +126,21 @@ def mae(orig, pred):
     # Verificar si tienen mismo shape
     if(orig.shape != pred.shape):
         raise Exception('Deben tener mismo shape')
-    return np.sum(np.abs(orig - pred), axis=0)/len(orig)
+    return np.mean(np.abs(orig - pred))
 
 
 def rmse(orig, pred):
     # Verificar si tienen mismo shape
     if(orig.shape != pred.shape):
         raise Exception('Deben tener mismo shape')
-    return np.sqrt(np.sum((orig - pred)**2, axis=0)/len(orig))
+    return np.sqrt(np.mean((orig - pred)**2))
 
 
 def mape(orig, pred):
     # Verificar si tienen mismo shape
     if(orig.shape != pred.shape):
         raise Exception('Deben tener mismo shape')
-    return np.sum(np.abs((orig - pred)/orig), axis=0)*100/len(orig)
+    return np.mean(np.abs((orig - pred)/orig))*100
 
 def plot_history(history,metric):
     fig, ax = plt.subplots(figsize = (8,5))
@@ -148,14 +148,32 @@ def plot_history(history,metric):
     ax.plot(history.history['val_'+metric],label='validation '+metric)
     ax.legend()
 
-def plot_pred(orig,pred):
+def plot_pred(orig,pred,last_year,test_year=None):
+    n = len(orig)
     y_o, y_p = orig.T, pred.T
+    df = DataFrame()
+    df['year'] = [last_year-(n-i+2) for i in range(n)]
+    df['orig_1'] = y_o[0]
+    df['orig_2'] = y_o[1]
+    df['orig_3'] = y_o[2]
+    df['pred_1'] = y_p[0]
+    df['pred_2'] = y_p[1]
+    df['pred_3'] = y_p[2]
+    df = df.set_index('year')
+    
     n = len(y_o)
-    fig, axes = plt.subplots(n,figsize=(5,12))
     for i in range(n):
-        line_o, = axes[i].plot(y_o[i],label='orig')
-        line_p, = axes[i].plot(y_p[i],label='pred')
-        axes[i].legend(handles=[line_o,line_p])
+        fig, ax = plt.subplots(figsize=(8,4))
+        line_o, = ax.plot(df['orig_'+str(i+1)],label='orig')
+        line_p, = ax.plot(df['pred_'+str(i+1)],label='pred')
+        ax.legend(handles=[line_o,line_p])
+        ax.set_title('Predicción (t + {})'.format(i+1))
+        ax.set_xlabel('Año (t = 0)')
+        ax.set_ylabel('Crecimiento PBI (%)')
+        if test_year != None:
+            plt.vlines(x=test_year,ymin=np.minimum(df['orig_'+str(i+1)].min(), df['pred_'+str(i+1)].min()),
+                ymax=np.maximum(df['orig_'+str(i+1)].max(), df['pred_'+str(i+1)].max()) ,colors='gray', ls=':')
+        plt.show()
 
 def print_hp(path,tuner):
     with open(path,'a') as o:
@@ -167,3 +185,8 @@ def flatten(A : np.ndarray):
     for a in A:
         r.append(a.flatten())
     return np.array(r)
+
+def print_line(line,path):
+    f = open(path,'a')
+    f.write(str(line))
+    f.close()
