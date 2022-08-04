@@ -148,7 +148,7 @@ def plot_history(history,metric):
     ax.plot(history.history['val_'+metric],label='validation '+metric)
     ax.legend()
 
-def plot_pred(orig,pred,last_year):
+def plot_pred(orig,pred,last_year,test_year=None):
     n = len(orig)
     y_o, y_p = orig.T, pred.T
     df = DataFrame()
@@ -170,6 +170,9 @@ def plot_pred(orig,pred,last_year):
         ax.set_title('Predicción (t + {})'.format(i+1))
         ax.set_xlabel('Año (t = 0)')
         ax.set_ylabel('Crecimiento PBI (%)')
+        if test_year != None:
+            plt.vlines(x=test_year,ymin=np.minimum(df['orig_'+str(i+1)].min(), df['pred_'+str(i+1)].min()),
+                ymax=np.maximum(df['orig_'+str(i+1)].max(), df['pred_'+str(i+1)].max()) ,colors='gray', ls=':')
         plt.show()
 
 def print_hp(path,tuner):
