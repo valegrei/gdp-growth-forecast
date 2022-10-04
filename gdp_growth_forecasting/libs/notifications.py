@@ -1,11 +1,6 @@
 import smtplib
 
-def enviar_correo(subject,msg):
-    user_mail = input('Email (outlook):')
-    passwd = input('Password:')
-
-    from_addr = user_mail
-    to_addr = input('To address:')
+def enviar_correo(user_mail,passwd,from_addr,to_addr,subject,msg):
     smtp_srv = "smtp-mail.outlook.com"
 
     message = "Subject: {}\nTo: {}\n\n{}".format(subject,to_addr,msg)
