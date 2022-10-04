@@ -1,6 +1,7 @@
 import numpy as np
 from pandas import DataFrame, merge
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 import contextlib
 
 def split_df(a: DataFrame, test_prop: float):
@@ -166,13 +167,18 @@ def plot_pred(orig,pred,last_year,test_year=None):
         fig, ax = plt.subplots(figsize=(8,4))
         line_o, = ax.plot(df['orig_'+str(i+1)],label='orig')
         line_p, = ax.plot(df['pred_'+str(i+1)],label='pred')
-        ax.legend(handles=[line_o,line_p])
         ax.set_title('Predicción (t + {})'.format(i+1))
         ax.set_xlabel('Año (t)')
         ax.set_ylabel('Crecimiento PBI (%)')
         if test_year != None:
-            plt.vlines(x=test_year,ymin=np.minimum(df['orig_'+str(i+1)].min(), df['pred_'+str(i+1)].min()),
-                ymax=np.maximum(df['orig_'+str(i+1)].max(), df['pred_'+str(i+1)].max()) ,colors='gray', ls=':')
+            ymin=np.minimum(df['orig_'+str(i+1)].min(),df['pred_'+str(i+1)].min())
+            ymax=np.maximum(df['orig_'+str(i+1)].max(), df['pred_'+str(i+1)].max())
+            plt.vlines(x = test_year, ymin = ymin, ymax = ymax ,colors = 'gray', ls = ':')
+            plt.axvspan(test_year, last_year-3, facecolor="#ffcc66", alpha=0.5)
+            test_r = mpatches.Patch(color='#ffcc66', label='Prueba')
+            ax.legend(handles=[line_o,line_p,test_r])
+        else:    
+            ax.legend(handles=[line_o,line_p])
         plt.show()
 
 def print_hp(path,tuner):
